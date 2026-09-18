@@ -50,6 +50,7 @@ public:
     bool isEditFirstWord() const;
     QString getInputText() const;
     void insertText(const QString &text);
+    void appendText(const QString &text);
 
     void setReply(MessagePtr target);
     void setPlaceholderText(const QString &text);

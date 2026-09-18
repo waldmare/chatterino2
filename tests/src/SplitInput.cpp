@@ -168,6 +168,29 @@ TEST_F(SplitInputCompletionTest, EmoteCompletionPreservesUndoHistory)
     EXPECT_TRUE(this->input.getInputText().isEmpty());
 }
 
+TEST_F(SplitInputCompletionTest, AppendTextAddsToEnd)
+{
+    this->input.setInputText("existing");
+    auto *edit = this->input.findChild<QTextEdit *>();
+    ASSERT_NE(edit, nullptr);
+    edit->moveCursor(QTextCursor::Start);
+
+    this->input.appendText(" text");
+
+    EXPECT_EQ("existing text", this->input.getInputText());
+}
+
+TEST(SplitInput, AppendToChatboxCommand)
+{
+    MockApplication app;
+    Split split(nullptr);
+    split.getInput().setInputText("existing ");
+
+    EXPECT_EQ("", app.commands.execCommand("/append-to-chatbox foo bar",
+                                           nullptr, false, &split));
+    EXPECT_EQ("existing foo bar", split.getInput().getInputText());
+}
+
 TEST_F(SplitInputCompletionTest, UsernameCompletionPreservesUndoHistory)
 {
     this->input.insertText("boring game @fors");

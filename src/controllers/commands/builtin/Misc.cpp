@@ -25,6 +25,7 @@
 #include "widgets/Notebook.hpp"
 #include "widgets/splits/Split.hpp"
 #include "widgets/splits/SplitContainer.hpp"
+#include "widgets/splits/SplitInput.hpp"
 #include "widgets/Window.hpp"
 
 #include <QCommandLineParser>
@@ -447,6 +448,31 @@ QString clearmessages(const CommandContext &ctx)
         split->getChannelView().clearMessages();
     }
 
+    return "";
+}
+
+QString appendToChatbox(const CommandContext &ctx)
+{
+    if (ctx.split == nullptr)
+    {
+        if (ctx.channel != nullptr)
+        {
+            ctx.channel->addSystemMessage("The /append-to-chatbox command can "
+                                          "only be used from a split.");
+        }
+        return "";
+    }
+
+    if (ctx.words.size() < 2)
+    {
+        if (ctx.channel != nullptr)
+        {
+            ctx.channel->addSystemMessage("Usage: /append-to-chatbox <text>");
+        }
+        return "";
+    }
+
+    ctx.split->getInput().appendText(ctx.words.mid(1).join(' '));
     return "";
 }
 
