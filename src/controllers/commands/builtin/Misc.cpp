@@ -472,7 +472,9 @@ QString appendToChatbox(const CommandContext &ctx)
         return "";
     }
 
-    ctx.split->getInput().appendText(ctx.words.mid(1).join(' '));
+    const auto commandEnd =
+        ctx.rawText.indexOf(ctx.words.front()) + ctx.words.front().size();
+    ctx.split->getInput().appendText(ctx.rawText.mid(commandEnd + 1));
     return "";
 }
 

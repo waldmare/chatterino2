@@ -17,6 +17,7 @@ class Split;
 
 struct CommandContext {
     QStringList words;
+    QString rawText;
 
     // Can be null
     ChannelPtr channel;

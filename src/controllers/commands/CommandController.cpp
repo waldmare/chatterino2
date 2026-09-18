@@ -584,9 +584,8 @@ QString CommandController::execCommand(const QString &textNoEmoji,
                     std::get_if<CommandFunctionWithContext>(&it->second))
             {
                 CommandContext ctx{
-                    words,
-                    channel,
-                    dynamic_cast<TwitchChannel *>(channel.get()),
+                    words,   text,
+                    channel, dynamic_cast<TwitchChannel *>(channel.get()),
                     split,
                 };
                 return (*command)(ctx);
