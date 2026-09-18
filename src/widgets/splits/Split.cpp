@@ -501,7 +501,7 @@ void Split::addShortcuts()
                  });
 
              message = getApp()->getCommands()->execCommand(
-                 message, this->getChannel(), false);
+                 message, this->getChannel(), false, this);
              this->getChannel()->sendMessage(message);
              return "";
          }},

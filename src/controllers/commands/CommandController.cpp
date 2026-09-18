@@ -385,6 +385,8 @@ CommandController::CommandController(const Paths &paths)
 
     this->registerCommand("/clearmessages", &commands::clearmessages);
 
+    this->registerCommand("/append-to-chatbox", &commands::appendToChatbox);
+
     this->registerCommand("/settitle", &commands::setTitle);
 
     this->registerCommand("/setgame", &commands::setGame);
@@ -535,7 +537,8 @@ CommandModel *CommandController::createModel(QObject *parent)
 }
 
 QString CommandController::execCommand(const QString &textNoEmoji,
-                                       ChannelPtr channel, bool dryRun)
+                                       ChannelPtr channel, bool dryRun,
+                                       Split *split)
 {
     QString text =
         getApp()->getEmotes()->getEmojis()->replaceShortCodes(textNoEmoji);
@@ -581,9 +584,9 @@ QString CommandController::execCommand(const QString &textNoEmoji,
                     std::get_if<CommandFunctionWithContext>(&it->second))
             {
                 CommandContext ctx{
-                    words,
-                    channel,
-                    dynamic_cast<TwitchChannel *>(channel.get()),
+                    words,   text,
+                    channel, dynamic_cast<TwitchChannel *>(channel.get()),
+                    split,
                 };
                 return (*command)(ctx);
             }

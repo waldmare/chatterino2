@@ -578,8 +578,8 @@ QString SplitInput::handleSendMessage(const std::vector<QString> &arguments)
         QString message = this->ui_.textEdit->toPlainText();
 
         message = message.replace('\n', ' ');
-        QString sendMessage =
-            getApp()->getCommands()->execCommand(message, c, false);
+        QString sendMessage = getApp()->getCommands()->execCommand(
+            message, c, false, this->split_);
 
         c->sendMessage(sendMessage);
 
@@ -611,7 +611,7 @@ QString SplitInput::handleSendMessage(const std::vector<QString> &arguments)
 
     message = message.replace('\n', ' ');
     QString sendMessage =
-        getApp()->getCommands()->execCommand(message, c, false);
+        getApp()->getCommands()->execCommand(message, c, false, this->split_);
 
     // Reply within TwitchChannel
     tc->sendReply(sendMessage, this->replyTarget_->id);
@@ -1221,6 +1221,14 @@ QString SplitInput::getInputText() const
 void SplitInput::insertText(const QString &text)
 {
     this->ui_.textEdit->insertPlainText(text);
+}
+
+void SplitInput::appendText(const QString &text)
+{
+    auto cursor = this->ui_.textEdit->textCursor();
+    cursor.movePosition(QTextCursor::End);
+    cursor.insertText(text);
+    this->ui_.textEdit->setTextCursor(cursor);
 }
 
 void SplitInput::hide()

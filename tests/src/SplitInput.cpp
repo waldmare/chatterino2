@@ -168,6 +168,66 @@ TEST_F(SplitInputCompletionTest, EmoteCompletionPreservesUndoHistory)
     EXPECT_TRUE(this->input.getInputText().isEmpty());
 }
 
+TEST_F(SplitInputCompletionTest, AppendTextAddsToEnd)
+{
+    this->input.setInputText("existing");
+    auto *edit = this->input.findChild<QTextEdit *>();
+    ASSERT_NE(edit, nullptr);
+    edit->moveCursor(QTextCursor::Start);
+
+    this->input.appendText(" text");
+
+    EXPECT_EQ("existing text", this->input.getInputText());
+}
+
+TEST(SplitInput, AppendToChatboxCommand)
+{
+    MockApplication app;
+    Split split(nullptr);
+    Split otherSplit(nullptr);
+    otherSplit.getInput().setInputText("other split");
+
+    EXPECT_EQ("", app.commands.execCommand("/append-to-chatbox foo bar",
+                                           nullptr, false, &split));
+    EXPECT_EQ("foo bar", split.getInput().getInputText());
+
+    split.getInput().setInputText("existing ");
+    auto *edit = split.getInput().findChild<QTextEdit *>();
+    ASSERT_NE(edit, nullptr);
+    auto cursor = edit->textCursor();
+    cursor.setPosition(3);
+    edit->setTextCursor(cursor);
+
+    EXPECT_EQ("", app.commands.execCommand("/append-to-chatbox foo bar",
+                                           nullptr, false, &split));
+    EXPECT_EQ("existing foo bar", split.getInput().getInputText());
+    EXPECT_EQ("other split", otherSplit.getInput().getInputText());
+
+    EXPECT_EQ("", app.commands.execCommand("/append-to-chatbox", nullptr, false,
+                                           &split));
+    EXPECT_EQ(
+        "", app.commands.execCommand("/append-to-chatbox foo", nullptr, false));
+    EXPECT_EQ("/append-to-chatbox foo",
+              app.commands.execCommand("/append-to-chatbox foo", nullptr, true,
+                                       &split));
+    EXPECT_EQ("existing foo bar", split.getInput().getInputText());
+}
+
+TEST(SplitInput, AppendToChatboxPreservesSpaces)
+{
+    MockApplication app;
+    Split split(nullptr);
+
+    EXPECT_EQ("", app.commands.execCommand("/append-to-chatbox foo  bar ",
+                                           nullptr, false, &split));
+    EXPECT_EQ("foo  bar ", split.getInput().getInputText());
+
+    split.getInput().setInputText("");
+    EXPECT_EQ("", app.commands.execCommand("  /append-to-chatbox  foo  bar ",
+                                           nullptr, false, &split));
+    EXPECT_EQ(" foo  bar ", split.getInput().getInputText());
+}
+
 TEST_F(SplitInputCompletionTest, UsernameCompletionPreservesUndoHistory)
 {
     this->input.insertText("boring game @fors");

@@ -2998,7 +2998,8 @@ void ChannelView::addCommandExecutionContextMenuItems(
                     {"element.copytext", elementCopyText},
                 });
 
-            value = getApp()->getCommands()->execCommand(value, channel, false);
+            value = getApp()->getCommands()->execCommand(value, channel, false,
+                                                         this->split_);
 
             channel->sendMessage(value);
         });
@@ -3159,7 +3160,8 @@ void ChannelView::handleLinkClick(QMouseEvent *event, const Link &link,
                 QStringList(), Command{"(modaction)", value}, true, channel,
                 layout->getMessage());
 
-            value = getApp()->getCommands()->execCommand(value, channel, false);
+            value = getApp()->getCommands()->execCommand(value, channel, false,
+                                                         this->split_);
 
             channel->sendMessage(value);
         }

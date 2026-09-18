@@ -21,6 +21,7 @@ class Settings;
 class Paths;
 class Channel;
 using ChannelPtr = std::shared_ptr<Channel>;
+class Split;
 struct Message;
 
 struct Command;
@@ -33,7 +34,7 @@ public:
     SignalVector<Command> items;
 
     QString execCommand(const QString &text, std::shared_ptr<Channel> channel,
-                        bool dryRun);
+                        bool dryRun, Split *split = nullptr);
     QStringList getDefaultChatterinoCommandList();
 
     CommandController(const Paths &paths);
